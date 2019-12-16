@@ -1,0 +1,162 @@
+#include <iostream>//library
+using namespace std;//cheat code
+//global 
+string WeaponsAndArmor[6] = { "flame sword", "fire armor", "ice wand", "jump boots", "wool socks","party hat" };
+string items[3] = { "health potion","smoke bomb", "ham" };
+int itemNums[3] = { 2,5,1 };
+int PlayerHealth = 100;
+void BattleSystem(int MonsterType);
+
+int main() {
+
+	int input;
+	do {
+		cout << endl << endl << "BATTLE SYSTEM SIMULATOR*************************" << endl;
+		cout << "press 1-4 to test battle system, 0 to quit" << endl; //numbers are different monsters
+		PlayerHealth = 100;//reset health just for testing
+		cin >> input;
+		BattleSystem(input);
+	} while (input != 0);
+	cout << "goodbye" << endl;
+}
+//function definition
+void BattleSystem(int MonsterType) {
+	int MonsterHealth;
+	int damage;
+	char input;
+	int input2;
+	bool CanRun = false;
+	bool SmokeCloud = false;
+	switch (MonsterType) {
+	case 1:
+		cout << "An octorok appears!" << endl;
+		MonsterHealth = 20;
+		break;
+	case 2: 
+		cout << "An ice demon appears!" << endl;
+		MonsterHealth = 40;
+		break;
+	case 3:
+		cout << "An fire bat appears!" << endl;
+		MonsterHealth = 10;
+		break;
+	case 4:
+		cout << "An dragon appears!" << endl;
+		MonsterHealth = 100;
+		break;
+	}
+	//battle loop
+	while (MonsterHealth >= 0 && PlayerHealth >= 0 && CanRun == false) {
+		cout << endl << endl << "The monster currently has " << MonsterHealth << " HP left." << endl;
+		cout << "Your HP is " << PlayerHealth << endl;
+		cout << "Press 'f' to fight, 'y' to use item, 'v' to view items, or 'r' to run." << endl;
+		cin >> input;
+		switch (input) {
+			//fight case
+		case 'f':
+			//flame sword hits harder on ice enemies
+			if (MonsterType == 2 && WeaponsAndArmor[0].compare("flame sword") == 0) {
+				damage = rand() % 20;
+				cout << "Your flame sword slices through the frost for " << damage << "damage" << endl;
+			}
+			//ice wand hits harder on fire enemies
+			else { //no special weapon used
+				damage = rand() % 10;
+				cout << "You swing your sword for " << damage << " damage." << endl;
+			}
+			MonsterHealth -= damage;
+			break;
+			//item case
+		case 'y':
+			cout << "Press 1 to use health potion, 2 to use smoke bomb, 3 to use ham." << endl;
+			cin >> input2;
+			//check if you have a health potion, if you do, add to player health and subtract from items
+			if (itemNums[input2 - 1] <= 0)
+				cout << "Sorry, you don't have any left" << endl;
+			else if (input2 == 1) {
+				cout << " glug glug" << endl;
+				PlayerHealth += 20;
+				itemNums[0] -= 1;
+			}
+			else if (input2 == 2) {
+				cout << "POOF" << endl;
+				itemNums[1] -= 1;
+				SmokeCloud = true;
+			}
+			else if (input2 == 3) {
+				cout << "You drop the ham on the ground with a thud." << endl;
+				if (MonsterType == 4) {
+					cout << "The dragon greedily grabs it and flies away." << endl;
+					CanRun = true;
+				}
+				else
+					cout << "The monsters briefly eye the ham with suspicion, then turn their attention back to you." << endl;
+			}
+			break;
+			//view item case
+		case 'v':
+			cout << "Your items" << endl;
+			for (int w = 0; w < 3; w++)
+				cout << itemNums[w] << "" << items[w] << endl;
+			break;
+			//run case
+		case 'r':
+			if (SmokeCloud == true) {
+				if (rand() % 10 > 8) {
+					cout << "The smoke hides your escape!" << endl;
+					CanRun = true;
+				}
+			}
+			else if (rand() % 10 > 4) {
+				cout << "Your luck holds and you are able to run away successfully!" << endl;
+				CanRun = true;
+			}
+			else
+				cout << "The enemy blocks your way and you cannot run." << endl;
+			break;
+		default:
+			cout << "Sorry, I don't understand that" << endl;
+		}//end switch
+		//monster attack
+		if (MonsterType == 1) {
+			damage = rand() % 20 + 10;
+			cout << "The octorock spits a rock and hits you for " << damage << endl;
+			PlayerHealth -= damage;
+		}
+		if (MonsterType == 2) {
+			damage = rand() % 5 + 10;
+			cout << "The ice demon freezes you for " << damage << endl;
+			PlayerHealth -= damage;
+		}
+		if (MonsterType == 3) {
+			damage = rand() % 20;
+			cout << "The fire bat burns you for " << damage << endl;
+			PlayerHealth -= damage;
+			if (WeaponsAndArmor[1].compare("fire armor") == 0) {
+				cout << "Your flame armor absorbs 20 damage!" << endl;
+				damage -= 20;
+			}
+		}
+		if (MonsterType == 4) {
+			if (rand() % 10 < 5) {//dragon has two possible attacks!
+				damage = rand() % 80 + 10;
+				cout << "The dragon's firey breathe scorches you for " << damage << endl;
+				if (WeaponsAndArmor[1].compare("fire armor") == 0) {
+					cout << "Your flame armor absorbs for 20 damage!" << endl;
+					damage -= 20;
+				}
+			}
+				else {
+					damage = rand() % 50 + 20;
+					cout << "The dragon's claws slash you for " << damage << endl;
+				}
+			}
+			PlayerHealth -= damage;
+		}
+			if (MonsterHealth <= 0)
+				cout << "The monster id defeated!!!" << endl;
+			if (PlayerHealth <= 0)
+				cout << "You died." << endl;
+		
+	}//end battle loop
+//end function definiton
